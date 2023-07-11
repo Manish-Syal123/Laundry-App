@@ -16,8 +16,12 @@ import { MaterialIcons, Feather } from "@expo/vector-icons";
 import Carousel from "../components/Carousel";
 import Services from "../components/Services";
 import DressItem from "../components/DressItem";
+import { useDispatch, useSelector } from "react-redux";
+import { getProducts } from "../ProductReducer";
 
 const HomeScreen = () => {
+  const cart = useSelector((state) => state.cart.cart);
+  console.log(cart);
   const [displayCurrentAddress, setdisplayCurrentAddress] = useState(
     "we are loading your location....."
   );
@@ -86,6 +90,20 @@ const HomeScreen = () => {
       }
     }
   };
+
+  const product = useSelector((state) => state.product.product);
+  //this product variable is equal to the initialState: product array in the ProductReducer
+  // console.log("product array", product);  //-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (product.length > 0) return; //if product data is already present then we dont wont it to add again the samew data
+
+    const fetchProducts = () => {
+      services.map((service) => dispatch(getProducts(service))); //adding all the services in the product array of ProductReducer
+    };
+    fetchProducts();
+  }, []);
+  console.log(product);
   // Actual Products ie. Dress Items
   const services = [
     {
@@ -183,7 +201,7 @@ const HomeScreen = () => {
       <Services />
 
       {/* Render all the products */}
-      {services.map((item, index) => (
+      {product.map((item, index) => (
         <DressItem item={item} key={index} />
       ))}
     </ScrollView>
