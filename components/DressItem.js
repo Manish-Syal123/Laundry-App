@@ -133,7 +133,7 @@ const DressItem = ({ item }) => {
             <Text
               style={{
                 borderColor: "gray",
-                borderRadius: 24,
+                borderRadius: 17,
                 borderWidth: 1.5,
                 marginVertical: 10,
                 color: "#088F8F",
