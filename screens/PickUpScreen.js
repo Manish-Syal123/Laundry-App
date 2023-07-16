@@ -10,9 +10,11 @@ import {
   ScrollView,
   Dimensions,
   Alert,
+  StatusBar,
 } from "react-native";
 import HorizontalDatepicker from "@awrminkhodaei/react-native-horizontal-datepicker";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 const PickUpScreen = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -24,6 +26,7 @@ const PickUpScreen = () => {
     .map((item) => item.quantity * item.price)
     .reduce((curr, prev) => curr + prev, 0);
 
+  const navigation = useNavigation();
   const deliveryTime = [
     {
       id: "0",
@@ -91,7 +94,12 @@ const PickUpScreen = () => {
       );
     }
     if (selectedDate && selectedTime && delivery) {
-      //navigation.navigate("")
+      // navigation.navigate("Cart");
+      navigation.replace("Cart", {
+        pickUpDate: selectedDate,
+        selectedTime: selectedTime,
+        no_Of_days: delivery,
+      }); //replace=>to not come again back to pickUP screen and directly move back to (default Navigaiton) HomeScreen
     }
   };
   return (
@@ -203,7 +211,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F0F0F0",
-    paddingTop: Platform.OS === "android" ? 25 : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   title: {
     fontSize: 16,
@@ -214,12 +222,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: "gray",
     borderWidth: 1.2,
-    paddingVertical: 80,
+    paddingVertical: 50,
     borderRadius: 9,
     margin: 10,
   },
   section: {
-    marginBottom: 10,
+    marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 16,
@@ -241,6 +249,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.2,
     justifyContent: "center",
     height: 39,
+    marginVertical: 10, //-
   },
   selectedTimeButton: {
     borderColor: "red",
@@ -257,6 +266,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.2,
     justifyContent: "center",
     height: 39,
+    marginVertical: 10,
   },
   selectedDeliveryButton: {
     borderColor: "red",
