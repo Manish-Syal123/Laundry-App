@@ -14,9 +14,15 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { decrementQuantity, incrementQuantity } from "../CartReducer";
+import {
+  cleanCart,
+  decrementQuantity,
+  incrementQuantity,
+} from "../CartReducer";
 import { decrementQty, incrementQty } from "../ProductReducer";
 import LinearGradient from "react-native-linear-gradient";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -29,6 +35,22 @@ const CartScreen = () => {
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
+
+  const userUid = auth.currentUser.uid;
+  const placeOrder = async () => {
+    navigation.navigate("Order");
+    dispatch(cleanCart());
+    await setDoc(
+      doc(db, "users", `${userUid}`),
+      {
+        orders: { ...cart },
+        pickUpDetails: route.params,
+      },
+      {
+        merge: true,
+      }
+    );
+  };
   return (
     <>
       <ScrollView style={styles.AndroidSafeArea}>
@@ -356,7 +378,7 @@ const CartScreen = () => {
             </Text>
           </View>
 
-          <Pressable>
+          <Pressable onPress={placeOrder}>
             <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
               Place Order
             </Text>

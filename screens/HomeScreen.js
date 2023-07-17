@@ -218,7 +218,10 @@ const HomeScreen = () => {
             <Text>{displayCurrentAddress}</Text>
           </View>
 
-          <Pressable style={{ marginLeft: "auto", marginRight: 7 }}>
+          <Pressable
+            onPress={() => navigation.navigate("Profile")}
+            style={{ marginLeft: "auto", marginRight: 7 }}
+          >
             {/* Pressable component are used to apply multiple events on single button like onPressIn , onPressOut, onLongPress events */}
             <Image
               style={{ width: 40, height: 40, borderRadius: 20 }}
