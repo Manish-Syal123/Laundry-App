@@ -26,6 +26,7 @@ const DressItem = ({ item }) => {
           alignItems: "center",
           justifyContent: "space-between",
           margin: 14,
+          marginBottom: 19,
         }}
       >
         <View>

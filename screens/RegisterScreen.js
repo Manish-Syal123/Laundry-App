@@ -8,16 +8,54 @@ import {
   KeyboardAvoidingView,
   Pressable,
   TextInput,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useState } from "react";
 import { MaterialCommunityIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Alert } from "react-native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebase"; //-
+import { doc, setDoc } from "firebase/firestore";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [buttonColor, setButtonColor] = useState("#318CE7"); //for changing Register button color to green on pressing
   const navigation = useNavigation();
+
+  const register = () => {
+    if (email === "" || password === "" || phone === "") {
+      Alert.alert(
+        "Invalid Details",
+        "Please fill all the details",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      );
+    }
+    setButtonColor("green");
+
+    createUserWithEmailAndPassword(auth, email, password).then(
+      (userCredential) => {
+        console.log("user credential", userCredential);
+        const user = userCredential._tokenResponse.email;
+        const myUserUid = auth.currentUser.uid;
+
+        setDoc(doc(db, "users", `${myUserUid}`), {
+          email: user,
+          phone: phone,
+        });
+      }
+    );
+  };
 
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
@@ -85,7 +123,6 @@ const RegisterScreen = () => {
               placeholder="Phone No."
               value={phone}
               onChangeText={(text) => setPhone(text)}
-              secureTextEntry={true}
               placeholderTextColor="black"
               style={{
                 fontSize: password ? 18 : 15,
@@ -99,9 +136,11 @@ const RegisterScreen = () => {
           </View>
 
           <Pressable
+            onPress={register}
             style={{
               width: 200,
-              backgroundColor: "#318CE7",
+              //backgroundColor: "#318CE7",
+              backgroundColor: buttonColor,
               padding: 15,
               borderRadius: 7,
               marginTop: 50,

@@ -19,10 +19,12 @@ import DressItem from "../components/DressItem";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../ProductReducer";
 import { useNavigation } from "@react-navigation/native";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const HomeScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
-
+  const [items, setItems] = useState([]);
   const total = cart
     .map((item) => item.quantity * item.price)
     .reduce((curr, prev) => curr + prev, 0);
@@ -101,13 +103,17 @@ const HomeScreen = () => {
 
   const product = useSelector((state) => state.product.product);
   //this product variable is equal to the initialState: product array in the ProductReducer
-  // console.log("product array", product);  //-
   const dispatch = useDispatch();
   useEffect(() => {
     if (product.length > 0) return; //if product data is already present then we dont wont it to add again the samew data
 
-    const fetchProducts = () => {
-      services.map((service) => dispatch(getProducts(service))); //adding all the services in the product array of ProductReducer
+    const fetchProducts = async () => {
+      const colRef = collection(db, "types");
+      const docsSnap = await getDocs(colRef);
+      docsSnap.forEach((doc) => {
+        items.push(doc.data());
+      });
+      items.map((service) => dispatch(getProducts(service))); //adding products into ProductReducer default array ie. product:[]
     };
     fetchProducts();
   }, []);
@@ -160,6 +166,41 @@ const HomeScreen = () => {
       id: "16",
       image: "https://cdn-icons-png.flaticon.com/128/293/293241.png",
       name: "Sleeveless",
+      quantity: 0,
+      price: 10,
+    },
+    {
+      id: "17",
+      image: "https://cdn-icons-png.flaticon.com/128/1785/1785219.png",
+      name: "Boys Blazer",
+      quantity: 0,
+      price: 10,
+    },
+    {
+      id: "18",
+      image: "https://cdn-icons-png.flaticon.com/128/188/188298.png",
+      name: "Girls Blazer",
+      quantity: 0,
+      price: 10,
+    },
+    {
+      id: "19",
+      image: "https://cdn-icons-png.flaticon.com/128/2161/2161101.png",
+      name: "Socks",
+      quantity: 0,
+      price: 10,
+    },
+    {
+      id: "20",
+      image: "https://cdn-icons-png.flaticon.com/128/5173/5173732.png",
+      name: "Rain-Coat",
+      quantity: 0,
+      price: 10,
+    },
+    {
+      id: "21",
+      image: "https://cdn-icons-png.flaticon.com/128/1540/1540518.png",
+      name: "Glove",
       quantity: 0,
       price: 10,
     },
