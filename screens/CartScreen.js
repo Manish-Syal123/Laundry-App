@@ -12,17 +12,21 @@ import {
 } from "react-native";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   cleanCart,
   decrementQuantity,
   incrementQuantity,
 } from "../CartReducer";
-import { decrementQty, incrementQty } from "../ProductReducer";
-import LinearGradient from "react-native-linear-gradient";
+import { cleanProduct, decrementQty, incrementQty } from "../ProductReducer";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
+import {
+  MaterialCommunityIcons,
+  FontAwesome5,
+  Ionicons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -38,8 +42,13 @@ const CartScreen = () => {
 
   const userUid = auth.currentUser.uid;
   const placeOrder = async () => {
-    navigation.navigate("Order");
+    //navigation.navigate("Order");
+    navigation.navigate("Payment", {
+      total: total,
+    });
+
     dispatch(cleanCart());
+    dispatch(cleanProduct());
     await setDoc(
       doc(db, "users", `${userUid}`),
       {
@@ -55,16 +64,100 @@ const CartScreen = () => {
     <>
       <ScrollView style={styles.AndroidSafeArea}>
         {total === 0 ? (
-          // <View style={{ justifyContent: "center", alignItems: "center" }}>
-          //   <Text style={{ fontSize: 16, fontWeight: "500", marginTop: 40 }}>
-          //     Your Cart is Empty
-          //   </Text>
-          // </View>
-          <Image
-            style={{ width: screenWidth, height: screenHeight }}
-            source={require("../assets/neon.jpeg")}
-          />
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Image
+              style={{ width: 358, height: 500, marginTop: 15 }}
+              source={require("../assets/emp1.png")}
+            />
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "500",
+                color: "#FF4500",
+              }}
+            >
+              Your Cart{"  "}
+              {
+                <MaterialIcons
+                  name="remove-shopping-cart"
+                  size={24}
+                  color="black"
+                />
+              }
+              {"  "}
+              is Empty
+            </Text>
+
+            <Pressable
+              onPress={() => navigation.replace("Home")}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                textAlign: "center",
+                marginTop: 40,
+                padding: 10,
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              <Ionicons name="ios-arrow-back" size={24} color="black" />
+              <Text
+                style={{
+                  fontSize: 19,
+                  fontWeight: "600",
+                  marginLeft: 10,
+                  marginRight: 10,
+                  color: "#3C5570",
+                }}
+              >
+                Back to Home
+              </Text>
+              <FontAwesome5 name="home" size={24} color="black" />
+            </Pressable>
+          </View>
         ) : (
+          //---------------------------------------------------------------------------
+          // <View
+          //   style={{
+          //     justifyContent: "center",
+          //     alignItems: "center",
+          //     marginTop: 300,
+          //   }}
+          // >
+          //   <MaterialCommunityIcons name="cart-off" size={64} color="black" />
+          //   <Text
+          //     onPress={() => navigation.replace("Home")}
+          //     style={{ fontSize: 16, fontWeight: "500", marginTop: 10 }}
+          //   >
+          //     Your cart is Empty
+          //   </Text>
+          //   <Pressable
+          //     onPress={() => navigation.replace("Home")}
+          //     style={{
+          //       flexDirection: "row",
+          //       alignItems: "center",
+          //       textAlign: "center",
+          //       marginTop: 40,
+          //       padding: 10,
+          //       marginLeft: "auto",
+          //       marginRight: "auto",
+          //     }}
+          //   >
+          //     <Ionicons name="ios-arrow-back" size={24} color="black" />
+          //     <Text
+          //       style={{
+          //         fontSize: 19,
+          //         fontWeight: "600",
+          //         marginLeft: 10,
+          //         marginRight: 10,
+          //       }}
+          //     >
+          //       Back to Home
+          //     </Text>
+          //     <FontAwesome5 name="home" size={24} color="black" />
+          //   </Pressable>
+          // </View>
+
           <>
             <View
               style={{
@@ -346,45 +439,52 @@ const CartScreen = () => {
             </View>
           </>
         )}
-      </ScrollView>
 
-      {/*(PopUp: to Place Order) Navigation to Payment Page */}
-      {total == 0 ? null : (
-        <Pressable
-          style={{
-            backgroundColor: "#088F8F",
-            padding: 10,
-            marginBottom: 40,
-            margin: 8,
-            borderRadius: 7,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <View>
-            <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
-              {cart.length} items | $ {total}
-            </Text>
-            <Text
+        {/*(PopUp: to Place Order) Navigation to Payment Page */}
+        {total == 0 ? null : (
+          <Pressable
+            style={{
+              backgroundColor: "#088F8F",
+              padding: 10,
+              marginBottom: 40,
+              margin: 8,
+              borderRadius: 7,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View>
+              <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
+                {cart.length} items | $ {total}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "400",
+                  color: "white",
+                  marginVertical: 6,
+                }}
+              >
+                extra charges might apply
+              </Text>
+            </View>
+
+            <Pressable
+              onPress={placeOrder}
               style={{
-                fontSize: 15,
-                fontWeight: "400",
-                color: "white",
-                marginVertical: 6,
+                backgroundColor: "white",
+                padding: 10,
+                borderRadius: 19,
               }}
             >
-              extra charges might apply
-            </Text>
-          </View>
-
-          <Pressable onPress={placeOrder}>
-            <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
-              Place Order
-            </Text>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: "black" }}>
+                Place your Order
+              </Text>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      )}
+        )}
+      </ScrollView>
     </>
   );
 };
