@@ -291,7 +291,7 @@ const HomeScreen = () => {
             </Text>
           </View>
 
-          <Pressable onPress={() => navigation.navigate("PickUp")}>
+          <Pressable onPress={() => navigation.navigate("DemoWlc")}>
             <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
               Proceed to pickup
             </Text>

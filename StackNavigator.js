@@ -10,6 +10,9 @@ import RegisterScreen from "./screens/RegisterScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import OrderScreen from "./screens/OrderScreen";
 import PaymentScreen from "./screens/PaymentScreen";
+import DemoLogin from "./screens/DemoLogin";
+import DemoRegistration from "./screens/DemoRegistration";
+import DemoWelcome from "./screens/DemoWelcome";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -56,6 +59,22 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Payment"
           component={PaymentScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="DemoWlc"
+          component={DemoWelcome}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Demolog"
+          component={DemoLogin}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Demoreg"
+          component={DemoRegistration}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
