@@ -5,15 +5,42 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const DemoLogin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    setLoading(true);
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (!authUser) {
+        setLoading(false);
+      }
+      if (authUser) {
+        navigation.navigate("Home");
+      }
+    });
+    return unsubscribe;
+  }, []);
+  const Login = () => {
+    signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+      console.log("user credential", userCredential);
+      const user = userCredential.user;
+      console.log("user details", user);
+    });
+  };
+
   return (
     <View style={{ backgroundColor: themeColors.bg, flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -57,6 +84,7 @@ const DemoLogin = () => {
             Email Address
           </Text>
           <TextInput
+            onChangeText={(text) => setEmail(text)}
             style={{
               padding: 16,
               backgroundColor: "#E5E7EB",
@@ -65,10 +93,11 @@ const DemoLogin = () => {
               marginBottom: 12,
             }}
             placeholder="email"
-            value="manish@gmail.com"
+            value={email}
           />
           <Text style={{ color: "#4B5563", marginLeft: 16 }}>Password</Text>
           <TextInput
+            onChangeText={(text) => setPassword(text)}
             style={{
               padding: 16,
               backgroundColor: "#F3F4F6",
@@ -77,7 +106,7 @@ const DemoLogin = () => {
             }}
             secureTextEntry
             placeholder="password"
-            value="test1234"
+            value={password}
           />
           <TouchableOpacity
             style={{
@@ -97,6 +126,7 @@ const DemoLogin = () => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={Login}
             style={{
               paddingTop: 12,
               paddingBottom: 12,

@@ -7,15 +7,53 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
+import { Alert } from "react-native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const DemoLogin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const navigation = useNavigation();
 
+  const register = () => {
+    if (email === "" || password === "" || name === "") {
+      Alert.alert(
+        "Invalid Details",
+        "Please fill all the details",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      );
+    }
+
+    createUserWithEmailAndPassword(auth, email, password).then(
+      (userCredential) => {
+        console.log("user credential", userCredential);
+        const user = userCredential._tokenResponse.email;
+        const myUserUid = auth.currentUser.uid;
+
+        setDoc(doc(db, "users", `${myUserUid}`), {
+          email: user,
+          displayName: name,
+        });
+      }
+    );
+    navigation.replace("Home");
+  };
   return (
     <View style={{ backgroundColor: themeColors.bg, flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -64,6 +102,9 @@ const DemoLogin = () => {
           {/* Full Name */}
           <Text style={{ color: "#718096", marginLeft: 16 }}>Full Name</Text>
           <TextInput
+            onChangeText={(text) => setName(text)}
+            placeholder="Enter Name"
+            value={name}
             style={{
               padding: 16,
               backgroundColor: "#E5E7EB",
@@ -71,14 +112,15 @@ const DemoLogin = () => {
               borderRadius: 16,
               marginBottom: 12,
             }}
-            placeholder="Enter Name"
-            value="manish syal"
           />
           {/* Email - address */}
           <Text style={{ color: "#718096", marginLeft: 16 }}>
             Email Address
           </Text>
           <TextInput
+            onChangeText={(text) => setEmail(text)}
+            placeholder="email"
+            value={email}
             style={{
               padding: 16,
               backgroundColor: "#E5E7EB",
@@ -86,24 +128,24 @@ const DemoLogin = () => {
               borderRadius: 16,
               marginBottom: 12,
             }}
-            placeholder="email"
-            value="manish@gmail.com"
           />
           {/* Password */}
           <Text style={{ color: "#4B5563", marginLeft: 16 }}>Password</Text>
           <TextInput
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            placeholder="password"
+            secureTextEntry
             style={{
               padding: 16,
               backgroundColor: "#F3F4F6",
               color: "#4B5563",
               borderRadius: 16,
             }}
-            secureTextEntry
-            placeholder="password"
-            value="test1234"
           />
           {/* SignUp button */}
           <TouchableOpacity
+            onPress={register}
             style={{
               paddingTop: 12,
               paddingBottom: 12,

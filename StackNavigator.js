@@ -22,10 +22,27 @@ const StackNavigator = () => {
       {/* First Screen(in stackNavigator) which will be displayed right after opening the app */}
       <Stack.Navigator>
         <Stack.Screen
+          name="DemoWlc"
+          component={DemoWelcome}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Demolog"
+          component={DemoLogin}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Demoreg"
+          component={DemoRegistration}
+          options={{ headerShown: false }}
+        />
+
+        {/* <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
-        />
+        /> */}
         <Stack.Screen
           name="Home"
           component={HomeScreen}
@@ -41,11 +58,11 @@ const StackNavigator = () => {
           component={CartScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Register"
           component={RegisterScreen}
           options={{ headerShown: false }}
-        />
+        /> */}
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
@@ -59,22 +76,6 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Payment"
           component={PaymentScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="DemoWlc"
-          component={DemoWelcome}
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name="Demolog"
-          component={DemoLogin}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Demoreg"
-          component={DemoRegistration}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

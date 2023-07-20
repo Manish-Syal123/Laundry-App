@@ -19,7 +19,7 @@ const ProfileScreen = () => {
   const signOutUser = () => {
     signOut(auth)
       .then(() => {
-        navigation.replace("Login");
+        navigation.replace("Demolog");
       })
       .catch((err) => {
         console.log(err);
