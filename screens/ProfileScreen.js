@@ -11,6 +11,7 @@ import React from "react";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { removeItem } from "../utils/asyncStorage";
 
 const ProfileScreen = () => {
   const user = auth.currentUser;
@@ -25,6 +26,12 @@ const ProfileScreen = () => {
         console.log(err);
       });
   };
+
+  const handleReset = async () => {
+    await removeItem("onboarded");
+    navigation.push("OnBoard");
+  };
+
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
       <Pressable style={{ marginVertical: 10 }}>
@@ -33,9 +40,47 @@ const ProfileScreen = () => {
         </Text>
       </Pressable>
 
-      <Pressable onPress={signOutUser}>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#088F8F" }}>
+      <Pressable
+        onPress={signOutUser}
+        style={{
+          backgroundColor: "aqua",
+          padding: 10,
+          borderRadius: 10,
+          borderWidth: 3,
+          borderColor: "black",
+          marginTop: 50,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "black",
+          }}
+        >
           Sign Out
+        </Text>
+      </Pressable>
+
+      <Pressable
+        onPress={handleReset}
+        style={{
+          backgroundColor: "",
+          padding: 10,
+          borderRadius: 10,
+          borderWidth: 3,
+          borderColor: "black",
+          marginTop: 50,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "black",
+          }}
+        >
+          Back to OnBoarding
         </Text>
       </Pressable>
     </SafeAreaView>

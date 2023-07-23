@@ -28,7 +28,7 @@ const HomeScreen = () => {
   const total = cart
     .map((item) => item.quantity * item.price)
     .reduce((curr, prev) => curr + prev, 0);
-  console.log(cart);
+  //console.log(cart);
 
   const navigation = useNavigation();
 
@@ -105,7 +105,7 @@ const HomeScreen = () => {
   //this product variable is equal to the initialState: product array in the ProductReducer
   const dispatch = useDispatch();
   useEffect(() => {
-    if (product.length > 0) return; //if product data is already present then we dont wont it to add again the samew data
+    if (product.length > 0) return; //if product data is already present then we dont wont it to add again the same data
 
     const fetchProducts = async () => {
       const colRef = collection(db, "types");
@@ -117,7 +117,8 @@ const HomeScreen = () => {
     };
     fetchProducts();
   }, []);
-  console.log(product);
+  //console.log(product);
+
   // Actual Products ie. Dress Items
   const services = [
     {
@@ -205,6 +206,7 @@ const HomeScreen = () => {
       price: 10,
     },
   ];
+
   return (
     <>
       <ScrollView style={styles.AndroidSafeArea}>
