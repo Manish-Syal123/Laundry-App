@@ -25,6 +25,8 @@ import { db } from "../firebase";
 const HomeScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
   const [items, setItems] = useState([]);
+  const [searchtext, setSearchText] = useState("");
+
   const total = cart
     .map((item) => item.quantity * item.price)
     .reduce((curr, prev) => curr + prev, 0);
@@ -102,6 +104,7 @@ const HomeScreen = () => {
   };
 
   const product = useSelector((state) => state.product.product);
+
   //this product variable is equal to the initialState: product array in the ProductReducer
   const dispatch = useDispatch();
   useEffect(() => {
@@ -118,6 +121,15 @@ const HomeScreen = () => {
     fetchProducts();
   }, []);
   //console.log(product);
+
+  //Implemented the Search Functionality
+  const [filterproduct, setFilterProduct] = useState(product);
+  useEffect(() => {
+    const newProducts = product.filter((prod) =>
+      prod.name.toLowerCase().includes(searchtext.toLowerCase())
+    );
+    setFilterProduct(newProducts);
+  }, [searchtext]);
 
   // Actual Products ie. Dress Items
   const services = [
@@ -247,7 +259,10 @@ const HomeScreen = () => {
             borderRadius: 7,
           }}
         >
-          <TextInput placeholder="Search for Items or More" />
+          <TextInput
+            onChangeText={setSearchText}
+            placeholder="Search for Items...."
+          />
           <Feather name="search" size={24} color="#fd5c63" />
         </View>
 
@@ -258,7 +273,10 @@ const HomeScreen = () => {
         <Services />
 
         {/* Render all the products */}
-        {product.map((item, index) => (
+        {/* {product.map((item, index) => (
+          <DressItem item={item} key={index} />
+        ))} */}
+        {filterproduct.map((item, index) => (
           <DressItem item={item} key={index} />
         ))}
       </ScrollView>
