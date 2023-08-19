@@ -5,8 +5,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/HomeScreen";
 import PickUpScreen from "./screens/PickUpScreen";
 import CartScreen from "./screens/CartScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import OrderScreen from "./screens/OrderScreen";
 import PaymentScreen from "./screens/PaymentScreen";
@@ -66,12 +64,6 @@ const StackNavigator = () => {
             component={DemoRegistration}
             options={{ headerShown: false }}
           />
-
-          {/* <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          /> */}
           <Stack.Screen
             name="Home"
             component={HomeScreen}
@@ -87,11 +79,6 @@ const StackNavigator = () => {
             component={CartScreen}
             options={{ headerShown: false }}
           />
-          {/* <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ headerShown: false }}
-          /> */}
           <Stack.Screen
             name="Profile"
             component={ProfileScreen}
@@ -137,12 +124,6 @@ const StackNavigator = () => {
             component={OnboardingScreen}
             options={{ headerShown: false }}
           />
-
-          {/* <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          /> */}
           <Stack.Screen
             name="Home"
             component={HomeScreen}
@@ -158,11 +139,6 @@ const StackNavigator = () => {
             component={CartScreen}
             options={{ headerShown: false }}
           />
-          {/* <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ headerShown: false }}
-          /> */}
           <Stack.Screen
             name="Profile"
             component={ProfileScreen}
