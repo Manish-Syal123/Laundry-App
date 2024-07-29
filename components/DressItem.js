@@ -8,12 +8,13 @@ import {
 } from "../CartReducer";
 import { decrementQty, incrementQty } from "../ProductReducer";
 
-const DressItem = ({ item }) => {
+const DressItem = ({ item, refreshData }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const addItemToCart = () => {
     dispatch(addToCart(item)); // adding item into cart
     dispatch(incrementQty(item)); //product array of ProductReducer
+    refreshData();
   };
   return (
     <View>

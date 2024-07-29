@@ -57,7 +57,7 @@ const PaymentScreen = () => {
           }}
         >
           <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
-            PAY $ {route.params.total}
+            PAY $ {route.params.total + 95}
           </Text>
         </Pressable>
       </Pressable>

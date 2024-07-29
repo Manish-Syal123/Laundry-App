@@ -24,13 +24,15 @@ import { db } from "../firebase";
 
 const HomeScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
-  const [items, setItems] = useState([]);
+  const product = useSelector((state) => state.product.product);
+  const dispatch = useDispatch();
+
   const [searchtext, setSearchText] = useState("");
+  const [filterproduct, setFilterProduct] = useState(product);
 
   const total = cart
     .map((item) => item.quantity * item.price)
     .reduce((curr, prev) => curr + prev, 0);
-  //console.log(cart);
 
   const navigation = useNavigation();
 
@@ -38,12 +40,12 @@ const HomeScreen = () => {
     "we are loading your location....."
   );
   const [locationServicesEnabled, setlocationServicesEnabled] = useState(false);
+
   useEffect(() => {
     checkIfLocationEnabled();
     getCurrentLocation();
   }, []);
 
-  //to check whether the location on the device is enabled or not
   const checkIfLocationEnabled = async () => {
     let enabled = await Location.hasServicesEnabledAsync();
     if (!enabled) {
@@ -64,10 +66,9 @@ const HomeScreen = () => {
       setlocationServicesEnabled(enabled);
     }
   };
-  // to get the current co-ordinate(location) of device
+
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-
     if (status !== "granted") {
       Alert.alert(
         "Permission denied",
@@ -83,18 +84,14 @@ const HomeScreen = () => {
         { cancelable: false }
       );
     }
-    //to get the coordinates = latitude & longitude
+
     const { coords } = await Location.getCurrentPositionAsync();
-    //console.log(coords); //-
-
     if (coords) {
-      const { latitude, longitude } = coords; //destructuring the coordinates from coords
-
+      const { latitude, longitude } = coords;
       let response = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
-      //console.log(response); //-
 
       for (let item of response) {
         let address = `${item.region} , ${item.city} , ${item.postalCode}`;
@@ -103,35 +100,29 @@ const HomeScreen = () => {
     }
   };
 
-  const product = useSelector((state) => state.product.product);
-
-  //this product variable is equal to the initialState: product array in the ProductReducer
-  const dispatch = useDispatch();
   useEffect(() => {
-    if (product.length > 0) return; //if product data is already present then we dont wont it to add again the same data
+    if (product.length === 0) {
+      fetchProducts();
+    }
+  }, [product]);
 
-    const fetchProducts = async () => {
-      const colRef = collection(db, "types");
-      const docsSnap = await getDocs(colRef);
-      docsSnap.forEach((doc) => {
-        items.push(doc.data());
-      });
-      items.map((service) => dispatch(getProducts(service))); //adding products into ProductReducer default array ie. product:[]
-    };
-    fetchProducts();
-  }, []);
-  //console.log(product);
+  const fetchProducts = async () => {
+    const colRef = collection(db, "types");
+    const docsSnap = await getDocs(colRef);
+    const items = [];
+    docsSnap.forEach((doc) => {
+      items.push(doc.data());
+    });
+    items.forEach((service) => dispatch(getProducts(service)));
+  };
 
-  //Implemented the Search Functionality
-  const [filterproduct, setFilterProduct] = useState(product);
   useEffect(() => {
     const newProducts = product.filter((prod) =>
       prod.name.toLowerCase().includes(searchtext.toLowerCase())
     );
     setFilterProduct(newProducts);
-  }, [searchtext]);
+  }, [searchtext, product]);
 
-  // Actual Products ie. Dress Items
   const services = [
     {
       id: "0",
@@ -222,7 +213,6 @@ const HomeScreen = () => {
   return (
     <>
       <ScrollView style={styles.AndroidSafeArea}>
-        {/* Location and Profile */}
         <View
           style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
         >
@@ -231,12 +221,10 @@ const HomeScreen = () => {
             <Text style={{ fontSize: 18, fontWeight: "600" }}>Home</Text>
             <Text>{displayCurrentAddress}</Text>
           </View>
-
           <Pressable
             onPress={() => navigation.navigate("Profile")}
             style={{ marginLeft: "auto", marginRight: 7 }}
           >
-            {/* Pressable component are used to apply multiple events on single button like onPressIn , onPressOut, onLongPress events */}
             <Image
               style={{ width: 40, height: 40, borderRadius: 20 }}
               source={{
@@ -246,7 +234,6 @@ const HomeScreen = () => {
           </Pressable>
         </View>
 
-        {/* Search Bar */}
         <View
           style={{
             padding: 10,
@@ -266,23 +253,19 @@ const HomeScreen = () => {
           <Feather name="search" size={24} color="#fd5c63" />
         </View>
 
-        {/* Image Carousel  */}
         <Carousel />
-
-        {/* Services Component */}
         <Services />
 
-        {/* Render all the products */}
-        {/* {product.map((item, index) => (
-          <DressItem item={item} key={index} />
-        ))} */}
         {filterproduct.map((item, index) => (
-          <DressItem item={item} key={index} />
+          <DressItem
+            item={item}
+            key={index}
+            refreshData={() => fetchProducts()}
+          />
         ))}
       </ScrollView>
 
-      {/*(PopUp after adding items to cart) Navigation to PickUp screen */}
-      {total == 0 ? null : (
+      {total === 0 ? null : (
         <Pressable
           style={{
             backgroundColor: "#088F8F",
